@@ -50,7 +50,7 @@ class CookiesMiddleware(object):
     @classmethod
     def from_crawler(cls,crawler):
         return cls(
-            cookies_url = crawler.setting.get('COOKIES_URL')
+            cookies_url = crawler.settings.get('COOKIES_URL')
         )
 
     def get_random_cookies(self):
@@ -78,9 +78,8 @@ class ProxyMiddleware():
 
     @classmethod
     def from_crawler(cls, crawler):
-        settings = crawler.settings
         return cls(
-            proxy_url=settings.get('PROXY_URL')
+            proxy_url=crawler.settings.get('PROXY_URL')
         )
 
     def get_random_proxy(self):

@@ -80,6 +80,8 @@ class CleanTimePipeline():
         return date
 
     def process_item(self, item, spider):
-
-        item['created_at'] = self.parse_time(item['created_at'])
-        return item
+        created_time = item['created_at']
+        #发布时间可能为空，防止出现  KeyError: 'created_at'
+        if created_time:
+            item['created_at'] = self.parse_time(created_time)
+            return item

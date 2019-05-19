@@ -14,7 +14,7 @@ DOWNLOAD_DELAY = 1
 
 DOWNLOADER_MIDDLEWARES = {
     'SinaWeibo.middlewares.UserAgentMiddleware': 300,
-    # 'SinaWeibo.middlewares.CookiesMiddleware': 310,
+    'SinaWeibo.middlewares.CookiesMiddleware': 310,
     # 'SinaWeibo.middlewares.ProxyMiddleware': 320
 }
 
