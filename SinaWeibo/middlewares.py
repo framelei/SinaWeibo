@@ -5,8 +5,6 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-from scrapy import signals
-
 import random
 import requests
 import json
@@ -67,7 +65,7 @@ class CookiesMiddleware(object):
         #使用代理池中的cookies发起请求
         cookies = self.get_random_cookies()
         if cookies:
-            requests.cookies = cookies
+            request.cookies = cookies
             print('正在使用代理cookies：',cookies)
 
 
@@ -100,9 +98,3 @@ class ProxyMiddleware():
             if proxy:
                 uri = 'https://{proxy}'.format(proxy=proxy)
                 request.meta['proxy'] = uri
-
-
-
-
-
-

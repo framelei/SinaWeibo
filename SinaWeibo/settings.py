@@ -34,5 +34,7 @@ MONGO_USER = 'root'
 MONGO_PWD = '123456'
 
 
+
+# COOKIES_URL = 'http://127.0.0.1:5555/weibo/random'
 COOKIES_URL = 'http://192.168.43.212:5555/weibo/random'
 PROXY_URL = 'http://192.168.43.212:5556/random'
