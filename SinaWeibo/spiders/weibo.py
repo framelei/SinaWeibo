@@ -13,19 +13,12 @@ class WeiboSpider(scrapy.Spider):
     weibo_url = 'https://m.weibo.cn/api/container/getIndex?uid={uid}&type=uid&containerid=107603{uid}&page={page}'
 
 
-    # @classmethod
-    # def from_crawler(cls, crawler, *args, **kwargs):
-    #     return cls(
-    #         keyword = crawler.settings.get('KEYWORD')
-    #     )
-
     def start_requests(self):
         userinfo_url = self.start_urls.format(keyword=self.keyword,page=1)
         yield scrapy.Request(userinfo_url,callback=self.parse_user,meta={'page':1})
 
+    # 解析用户信息
     def parse_user(self,response):
-
-        # 解析用户信息
         result = json.loads(response.text)
         if result.get('ok') and result.get('data').get('cards') and len(result.get('data').get('cards')) and result.get('data').get('cards')[-1].get('card_group'):
             # user_infos = result.get('data').get('cards').get('1').get('card_group')
@@ -53,8 +46,8 @@ class WeiboSpider(scrapy.Spider):
                 weibo_url = self.weibo_url.format(uid=uid,page=1)
                 yield scrapy.Request(weibo_url,callback=self.parse_weibo,meta={'uid':uid,'page':1})
 
+    #解析用户微博
     def parse_weibo(self,response):
-        #解析用户微博
         result = json.loads(response.text)
         if result.get('ok') and result.get('data').get('cards') and len(result.get('data').get('cards')):
             weibo_infos = result.get('data').get('cards')

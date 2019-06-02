@@ -11,7 +11,7 @@ from scrapy import Item,Field
 
 class Useritem(Item):
 
-    collection = 'users'
+    collection = 'Sina_users'
     #用户唯一id
     uid = Field()
     #用户名
@@ -32,7 +32,7 @@ class Useritem(Item):
 
 class Weiboitem(Item):
 
-    collection ='weibos'
+    collection ='Sina_weibos'
     #用户唯一id
     uid = Field()
     #用户昵称

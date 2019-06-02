@@ -97,4 +97,5 @@ class ProxyMiddleware():
             proxy = self.get_random_proxy()
             if proxy:
                 uri = 'https://{proxy}'.format(proxy=proxy)
+                print('正在使用代理',uri)
                 request.meta['proxy'] = uri

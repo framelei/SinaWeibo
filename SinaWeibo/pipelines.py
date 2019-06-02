@@ -6,6 +6,8 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import pymongo
 from SinaWeibo.items import Weiboitem,Useritem
+from twisted.enterprise import adbapi   #enterprise:事业、企业
+import MySQLdb.cursors
 import time
 import re
 
@@ -53,6 +55,45 @@ class MongoDBPipeline(object):
     def close_spider(self,spider):
         self.client.close()
 
+
+
+class MysqlTwistedPipline(object):
+
+    def __init__(self, dbpool):
+        self.dbpool = dbpool
+
+    @classmethod
+    def from_settings(cls, settings):
+        dbparms = dict(
+            host = settings["MYSQL_HOST"],					#host、db、user、passwd...必须写死 ，和底层代码一一对应 （passwd  password）
+            db = settings["MYSQL_DATABASE"],					#因此下边的table不能传入
+            user = settings["MYSQL_USER"],
+            passwd = settings["MYSQL_PASSWORD"],
+            charset='utf8',
+            cursorclass=MySQLdb.cursors.DictCursor,
+            use_unicode=True,
+        )
+        dbpool = adbapi.ConnectionPool("MySQLdb", **dbparms)
+        return cls(dbpool)
+
+    def process_item(self, item, spider):
+        #使用twisted将mysql插入变成异步执行
+        query = self.dbpool.runInteraction(self.do_insert, item)
+        query.addErrback(self.handle_error, item, spider) #处理异常
+
+    def handle_error(self, failure, item, spider):
+        # 处理异步插入的异常
+        print (failure)
+
+    def do_insert(self, cursor, item):
+        #执行具体的插入
+        #根据不同的item 构建不同的sql语句并插入到mysql中
+        data = dict(item)
+        keys = ','.join(data.keys())
+        values = ','.join(['%s']*len(data))
+        sql = 'insert into %s(%s) value(%s)'%(item.collection,keys,values)		#数据库表名从items.py	详见P545
+        cursor.execute(sql, tuple(data.values()))
+
 class TimePipeline():
     #设置爬取时间
     def process_item(self, item, spider):
@@ -74,7 +115,7 @@ class CleanTimePipeline():
             date = time.strftime('%Y-%m-%d %H:%M', time.localtime(time.time() - float(hour) * 60 * 60))
         if re.match('昨天.*', date):
             date = re.match('昨天(.*)', date).group(1).strip()
-            date = time.strftime('%Y-%m-%d', time.localtime() - 24 * 60 * 60) + ' ' + date
+            date = time.strftime('%Y-%m-%d',time.localtime(time.time() - 24 * 60 * 60)) + ' ' + date
         if re.match('\d{2}-\d{2}', date):
             date = time.strftime('%Y-', time.localtime()) + date
         return date
