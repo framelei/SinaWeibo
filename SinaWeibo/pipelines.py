@@ -57,6 +57,10 @@ class MongoDBPipeline(object):
 
 
 
+# 保存到MySQL
+from twisted.enterprise import adbapi   #enterprise:事业、企业
+import MySQLdb.cursors
+
 class MysqlTwistedPipline(object):
 
     def __init__(self, dbpool):
@@ -80,6 +84,7 @@ class MysqlTwistedPipline(object):
         #使用twisted将mysql插入变成异步执行
         query = self.dbpool.runInteraction(self.do_insert, item)
         query.addErrback(self.handle_error, item, spider) #处理异常
+        return item
 
     def handle_error(self, failure, item, spider):
         # 处理异步插入的异常
@@ -93,6 +98,27 @@ class MysqlTwistedPipline(object):
         values = ','.join(['%s']*len(data))
         sql = 'insert into %s(%s) value(%s)'%(item.collection,keys,values)		#数据库表名从items.py	详见P545
         cursor.execute(sql, tuple(data.values()))
+
+class Fanscount_2_int():
+    #将粉丝数转换为int类型
+
+    def parse_number(self, date):
+        # if re.match('\d+', date):
+        #     date = int(date)
+        if re.match('\d+万', date):
+            date = int(re.match('(\d+)', date).group(1))*10000
+        elif re.match('\d+亿', date):
+            date = int(re.match('(\d+)', date).group(1))*100000000
+        elif re.match('\d+', date):
+            date = int(date)
+        return date
+
+    def process_item(self, item, spider):
+        fans_count = item.get('fans_count')
+        if fans_count:
+            item['fans_count'] = self.parse_number(fans_count)
+            print(item['fans_count'])
+        return item
 
 class TimePipeline():
     #设置爬取时间
@@ -121,8 +147,8 @@ class CleanTimePipeline():
         return date
 
     def process_item(self, item, spider):
-        created_time = item['created_at']
+        created_time = item.get('created_at')
         #发布时间可能为空，防止出现  KeyError: 'created_at'
         if created_time:
             item['created_at'] = self.parse_time(created_time)
-            return item
+        return item

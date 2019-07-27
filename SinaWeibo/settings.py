@@ -21,6 +21,7 @@ ITEM_PIPELINES = {
     'SinaWeibo.pipelines.TimePipeline': 300,
     'SinaWeibo.pipelines.SinaweiboPipeline': 310,
     'SinaWeibo.pipelines.CleanTimePipeline': 315,
+    'SinaWeibo.pipelines.Fanscount_2_int': 316,
     # 'SinaWeibo.pipelines.MongoDBPipeline': 320,
     'SinaWeibo.pipelines.MysqlTwistedPipline': 325,
 
@@ -29,15 +30,15 @@ ITEM_PIPELINES = {
 
 KEYWORD = '天使投资人'
 
-MONGO_DB = 'SinaWeibo'
+MONGO_DB = 'sinaweibo'
 MONGO_URI = 'localhost'
 MONGO_USER = 'root'
-MONGO_PWD = '123456'
+MONGO_PWD = 'Mongo_Lei'
 
 MYSQL_HOST = '127.0.0.1'
 MYSQL_DATABASE = 'sinaweibo'
 MYSQL_USER = 'root'
-MYSQL_PASSWORD = '123456'
+MYSQL_PASSWORD = 'Sql_Lei'
 
 MYSQL_TABLE = 'articles'
 

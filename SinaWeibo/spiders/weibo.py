@@ -15,7 +15,7 @@ class WeiboSpider(scrapy.Spider):
 
     def start_requests(self):
         userinfo_url = self.start_urls.format(keyword=self.keyword,page=1)
-        yield scrapy.Request(userinfo_url,callback=self.parse_user,meta={'page':1})
+        yield scrapy.Request(userinfo_url,callback=self.parse_user,meta={'page':1},dont_filter=True)
 
     # 解析用户信息
     def parse_user(self,response):
@@ -39,12 +39,12 @@ class WeiboSpider(scrapy.Spider):
                 #2、爬取下一页用户信息
                 page = response.meta.get('page') +1
                 userinfo_url = self.start_urls.format(keyword=self.keyword,page=page)
-                yield scrapy.Request(userinfo_url,callback=self.parse_user,meta={'page':page})
+                yield scrapy.Request(userinfo_url,callback=self.parse_user,meta={'page':page},dont_filter=True)
 
                 #3、爬取用户微博
-                uid = user_item['uid'] = user_info.get('user').get('id')
-                weibo_url = self.weibo_url.format(uid=uid,page=1)
-                yield scrapy.Request(weibo_url,callback=self.parse_weibo,meta={'uid':uid,'page':1})
+                # uid = user_item['uid'] = user_info.get('user').get('id')
+                # weibo_url = self.weibo_url.format(uid=uid,page=1)
+                # yield scrapy.Request(weibo_url,callback=self.parse_weibo,meta={'uid':uid,'page':1})
 
     #解析用户微博
     def parse_weibo(self,response):
