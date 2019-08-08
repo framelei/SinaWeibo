@@ -8,13 +8,15 @@ NEWSPIDER_MODULE = 'SinaWeibo.spiders'
 
 
 ROBOTSTXT_OBEY = False
-DOWNLOAD_DELAY = 0.25
+DOWNLOAD_DELAY = 0.1
+
 
 
 DOWNLOADER_MIDDLEWARES = {
     'SinaWeibo.middlewares.UserAgentMiddleware': 300,
     'SinaWeibo.middlewares.CookiesMiddleware': 310,
-    'SinaWeibo.middlewares.ProxyMiddleware': 320
+    # 'SinaWeibo.middlewares.ProxyMiddleware': 320,
+    # 'SinaWeibo.middlewares.ProxyMiddleware_Abuyun': 320,
 }
 
 ITEM_PIPELINES = {
@@ -44,8 +46,8 @@ MYSQL_TABLE = 'articles'
 
 #日志显示级别
 # LOG等级
-# LOG_LEVEL = 'DEBUG'
-# #指定日志输出的文件名，也可指定到标准输出端口
+# LOG_LEVEL = 'INFO'
+# 指定日志输出的文件名，也可指定到标准输出端口
 # LOG_FILE = "SinaWeibo.log"
 
 COOKIES_URL = 'http://129.28.200.147:5555/weibo/random'

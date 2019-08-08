@@ -68,7 +68,7 @@ class CookiesMiddleware(object):
             request.cookies = cookies
             print('正在使用代理cookies：',cookies)
 
-
+# 使用讯代理对接代理池
 class ProxyMiddleware():
 
     def __init__(self, proxy_url):
@@ -99,3 +99,20 @@ class ProxyMiddleware():
                 uri = 'https://{proxy}'.format(proxy=proxy)
                 print('正在使用代理',uri)
                 request.meta['proxy'] = uri
+
+
+# 使用阿布云代理隧道
+import base64
+# 1、代理服务器
+proxyServer = "http://http-dyn.abuyun.com:9020"
+# 2、代理隧道验证信息
+proxyUser = "HK7S2A2KW3ME8T8D"
+proxyPass = "E22841FF90C9065D"
+# 3、对用户名、密码进行加密，注意空格"Basic "
+proxyAuth = "Basic " + base64.urlsafe_b64encode(bytes((proxyUser + ":" + proxyPass), "ascii")).decode("utf8")
+print(proxyAuth)        #Basic SDAxMjM0NTY3ODkwMTIzRDowMTIzNDU2Nzg5MDEyMzQ1
+# 4、在process_request()方法中设置代理
+class ProxyMiddleware_Abuyun(object):
+    def process_request(self, request, spider):
+        request.meta["proxy"] = proxyServer
+        request.headers["Proxy-Authorization"] = proxyAuth

@@ -10,13 +10,17 @@ from twisted.enterprise import adbapi   #enterprise:事业、企业
 import MySQLdb.cursors
 import time
 import re
+import json
 
 
 class SinaweiboPipeline(object):
     def process_item(self, item, spider):
         if isinstance(item,Weiboitem):
             if item.get('pictures'):
-                item['pictures'] = [pic.get('url') for pic in item['pictures']]
+                pictures = [pic.get('url') for pic in item['pictures']]
+                item['pictures'] = json.dumps(pictures)
+            else:
+                item['pictures'] = '未引用图片'
         return item
 
 
@@ -111,13 +115,13 @@ class Fanscount_2_int():
             date = int(re.match('(\d+)', date).group(1))*100000000
         elif re.match('\d+', date):
             date = int(date)
-        return date
+        return int(date)
 
     def process_item(self, item, spider):
         fans_count = item.get('fans_count')
         if fans_count:
-            item['fans_count'] = self.parse_number(fans_count)
-            print(item['fans_count'])
+            item['fans_count'] = self.parse_number(str(fans_count))
+            # print(item['fans_count'])
         return item
 
 class TimePipeline():
